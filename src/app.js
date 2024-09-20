@@ -1,13 +1,8 @@
 const express = require('express');
+const routes = require('./routes'); //se pego index.js so preciso passar a pasta e ele pega index automaticamente
 
 const app = express();
 
-app.use(express.json());
-
-app.get('/teste', (req, res) => {
-  res
-    .status(200)
-    .send({ mensagem: 'boas-vindas à API' });
-});
+routes(app);
 
 module.exports = app;
