@@ -5,16 +5,14 @@ class Services {
   constructor (nomeDoModel) {
     this.nomeDoModel = nomeDoModel;
   }
-  async pegaTodosOsRegistros(pagina, limite) {
-    //paginar
-    const pular = (pagina - 1) * limite;
-
-    return datasource[this.nomeDoModel].findAll( { offset: pular, limit: limite } );
+  //Se receber nao receber where, busca tudo, se receber um where com filtros usa. Ex: pegaCursos para filtrar cursos por data de inicio
+  async pegaTodosOsRegistros(pular, limite, where = {}) {
+    return datasource[this.nomeDoModel].findAll( { offset: pular, limit: limite, where: { ...where } } );
   }
 
-  //metodo esta usando os escopos (filtros nas buscas) criados nos arquivos de modelos
-  async pegaRegistrosPorEscopo (escopo) {
-    return datasource[this.nomeDoModel].scope(escopo).findAll();
+  //metodo esta usando os escopos (filtros nas buscas) criados nos arquivos de modelos. E paginacao
+  async pegaRegistrosPorEscopo (escopo, pular, limite) {
+    return datasource[this.nomeDoModel].scope(escopo).findAll({ offset: pular, limit: limite });
   }
 
   async pegaRegistrosPorEscopoEId (escopo, id) {
@@ -22,11 +20,18 @@ class Services {
   }
 
   async pegaUmRegistroPorId(id) {
-    return datasource[this.nomeDoModel].findByOne(where);
+    return datasource[this.nomeDoModel].findByPk(id);
   }
 
   async pegaUmRegistro(where) {
-    return datasource[this.nomeDoModel].findByPk(id);
+    return datasource[this.nomeDoModel].findOne( { where: { ...where }} );
+  }
+
+  async pegaEContaRegistros(where) {
+    return datasource[this.nomeDoModel].findAndCountAll({ 
+      where: { ...where },
+      order: [['id', 'DESC']]
+    });
   }
 
   async criaRegistro(dadosDoRegistro) {
@@ -34,8 +39,8 @@ class Services {
   }
 
   //Sequelize retorna um array de um unico elemento com a quantidade de registros que foram atualizados
-  async atualizaRegistro(dadosAtualizados, id) {
-    const listaDeRegistrosAtualizados = await datasource[this.nomeDoModel].update( dadosAtualizados, { where: { id: id } } );
+  async atualizaRegistro(dadosAtualizados, where) {
+    const listaDeRegistrosAtualizados = await datasource[this.nomeDoModel].update( dadosAtualizados, { where: { ...where} } );
 
     if ( listaDeRegistrosAtualizados[0] === 0 ) {
       return false;

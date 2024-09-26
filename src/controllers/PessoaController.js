@@ -1,5 +1,6 @@
 const Controller = require('./Controller.js');
 const PessoaServices = require('../services/PessoaServices.js');
+const paginar = require('../utils/paginar.js');
 
 const pessoaServices = new PessoaServices();
 
@@ -10,9 +11,9 @@ class PessoaController extends Controller {
 
   //metodo proprio de Pessoa para exibir todas as matriculas de uma pessoa
   async pegaMatriculasAtivas (req, res) {
-    const { estudanteId } = req.params;
+    const { estudante_id } = req.params;
     try {
-      const listaMatriculas = await pessoaServices.pegaMatriculasAtivasPorEstudante( Number(estudanteId));
+      const listaMatriculas = await pessoaServices.pegaMatriculasAtivasPorEstudante( Number(estudante_id));
       res.status(200).json(listaMatriculas);
     } catch(erro) {
       return res.status(500).json({mensagem: erro.message});
@@ -20,9 +21,9 @@ class PessoaController extends Controller {
   }
 
   async pegaTodasAsMatriculas (req, res) {
-    const { estudanteId } = req.params;
+    const { estudante_id } = req.params;
     try {
-      const listaMatriculas = await pessoaServices.pegaTodasAsMatriculasPorEstudante( Number(estudanteId));
+      const listaMatriculas = await pessoaServices.pegaTodasAsMatriculasPorEstudante( Number(estudante_id));
       res.status(200).json(listaMatriculas);
     } catch(erro) {
       return res.status(500).json({mensagem: erro.message});
@@ -30,10 +31,15 @@ class PessoaController extends Controller {
   }
 
 
-
+  //essa funcao, quando chamada usa metodo pegaRegistroPorEscopo de services, passando o nome do escopo que foi definido
+  //em model Pessoa.js. O escopo contem o filtro para aplicar na busca, ou seja, mostrar inclusive pessoas com ativo=false
+  //pq por padrao, coloquei scopeDefault que sempre que buscar pessoas com model Pessoa só traz pessoas com ativo = true
+  //Essa funcao possibilita pegar inclusive pessoas ativo = false e tambem passa valores para paginacao
   async pegaTodasAsPessoas (req, res) {
+    const paginacao = paginar(req);
+
     try {
-      const listaTodasAsPessoas = await pessoaServices.pegaPessoasEscopoTodos();
+      const listaTodasAsPessoas = await pessoaServices.pegaRegistrosPorEscopo( 'todosOsRegistros', paginacao.pular,  paginacao.limite );
       return res.status(200).json(listaTodasAsPessoas);
 
     } catch (erro) {

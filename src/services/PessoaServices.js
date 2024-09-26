@@ -30,21 +30,14 @@ class PessoaServices extends Services {
 
 
   async pegaTodasAsMatriculasPorEstudante (estudanteId) {
-
     const estudante = await super.pegaUmRegistroPorId(estudanteId);
     const listaMatriculas = await estudante.getTodasAsMatriculas(); //scope de associacao = mixins
     return listaMatriculas;
   }
 
 
-  //essa funcao, quando chamada usa metodo pegaRegistroPorEscopo da classe super, passando o nome do escopo que foi definido
-  //em model Pessoa.js. O escopo contem o filtro para aplicar na busca, ou seja, mostrar inclusive pessoas com ativo=false
-  //pq por padrao, coloquei scopeDefault que sempre que buscar pessoas com model Pessoa só traz pessoas com ativo = true
-  //Essa funcao possibilita pegar inclusive pessoas ativo = false
-  async pegaPessoasEscopoTodos() {
-    return await super.pegaRegistrosPorEscopo('todosOsRegistros');
-  }
-
+ 
+  
 }
 
 
