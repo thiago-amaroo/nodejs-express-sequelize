@@ -46,8 +46,20 @@ class PessoaController extends Controller {
       return res.status(500).json({mensagem: erro.message});
     }
   }
-}
 
+
+  //Lembrando que metodos update retornam apenas o numero de registros que foram atualizados
+  async cancelaRegistroEstudante (req, res) {
+    const { estudante_id } = req.params;
+    try {
+      await pessoaServices.cancelaPessoaEMatriculas(Number(estudante_id));
+      return res.status(200).json( { mensagem: `Matrículas do ${estudante_id} canceladas`} );
+    } catch (erro) {
+      return res.status(500).json({mensagem: erro.message});
+    }
+
+  }
+}
 module.exports = PessoaController;
 
 

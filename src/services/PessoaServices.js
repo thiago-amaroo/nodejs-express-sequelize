@@ -1,8 +1,12 @@
+const dataSource = require('../database/models');
 const Services = require('./Services.js');
 
 class PessoaServices extends Services {
   constructor() {
     super('Pessoa');
+    //aqui crio uma propriedade com uma instancia de matriculaServices, que vai ter todos os metodos e propriedades de matriculaServices
+    //uso para poder acessar todas as operacoes com matriculas aqui no pessoaservices
+    this.matriculaServices = new Services('Matricula');
   }
 
   //metodo para pegar matriculas de um estudante (pessoa)
@@ -35,7 +39,17 @@ class PessoaServices extends Services {
     return listaMatriculas;
   }
 
+  //nao retorna objeto ao controlador pq update retorna apenas array vazio. 
+  //usando transaction do sequelize para monitorar alteracoes no bd.
+  //O argumento da funcao callback transacao, passo para o metodo que vai fazer a consulta ao bd. Nesse caso, os metodos estao em services.js
+  async cancelaPessoaEMatriculas(estudanteId) {
+    return dataSource.sequelize.transaction(async (transacao) => {
+      await super.atualizaRegistro({ativo: false}, {id: estudanteId}, transacao);
+      //atualizando tabela matriculas
+      await this.matriculaServices.atualizaRegistro( {status: 'cancelado'}, { estudante_id: estudanteId }, transacao );
+    });
 
+  }
  
   
 }

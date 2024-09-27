@@ -20,15 +20,18 @@ router.get('/pessoas/todos', (req, res) => pessoaController.pegaTodasAsPessoas(r
 router.get('/pessoas/:id', (req, res) => pessoaController.pegaUmPorId(req, res));
 router.post('/pessoas', (req, res) => pessoaController.criaNovo(req, res));
 router.put('/pessoas/:id', (req, res) => pessoaController.atualiza(req, res));
+router.put('/pessoas/:estudante_id/cancela', (req, res) => pessoaController.cancelaRegistroEstudante(req, res));
 router.delete('/pessoas/:id', (req, res) => pessoaController.excluir(req, res));
 
 //Para exibir matriculas de uma pessoa uso controlador da pessoa
 router.get('/pessoas/:estudante_id/matriculas', (req, res) => pessoaController.pegaMatriculasAtivas(req, res)); //uso scope de Pessoa
 router.get('/pessoas/:estudante_id/matriculas/todos', (req, res) => pessoaController.pegaTodasAsMatriculas(req, res)); //uso scope de Pessoa
 router.get('/pessoas/:estudante_id/matriculas/confirmadas', (req, res) => matriculaController.pegaMatriculasPorEstudante(req, res)); //rota igual matriculas do usuario mas conta os registros
-router.get('/pessoas//matriculas/lotadas', (req, res) => matriculaController.pegaCursosLotados(req, res)); 
+router.get('/pessoas/matriculas/lotadas', (req, res) => matriculaController.pegaCursosLotados(req, res)); 
 router.get('/pessoas/:estudante_id/matriculas/:id', (req, res) => matriculaController.pegaUm(req, res));
+
 router.put('/pessoas/:estudante_id/matriculas/:id', (req, res) => matriculaController.atualiza(req, res));
+
 router.delete('/pessoas/:estudante_id/matriculas/:id', (req, res) => matriculaController.excluir(req, res));
 
 //Matriculas nao acessa sozinha. Tem que ser matriculas de um estudante

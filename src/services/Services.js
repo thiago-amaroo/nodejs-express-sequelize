@@ -27,20 +27,22 @@ class Services {
     return datasource[this.nomeDoModel].findOne( { where: { ...where }} );
   }
 
-  async pegaEContaRegistros(where) {
-    return datasource[this.nomeDoModel].findAndCountAll({ 
-      where: { ...where },
-      order: [['id', 'DESC']]
-    });
+  async pegaEContaRegistros(options) {
+    return datasource[this.nomeDoModel].findAndCountAll( {...options} );
   }
+  
 
   async criaRegistro(dadosDoRegistro) {
     return datasource[this.nomeDoModel].create(dadosDoRegistro);
   }
 
   //Sequelize retorna um array de um unico elemento com a quantidade de registros que foram atualizados
-  async atualizaRegistro(dadosAtualizados, where) {
-    const listaDeRegistrosAtualizados = await datasource[this.nomeDoModel].update( dadosAtualizados, { where: { ...where} } );
+  async atualizaRegistro(dadosAtualizados, where, transacao = {}) {
+    const listaDeRegistrosAtualizados = await datasource[this.nomeDoModel]
+      .update( dadosAtualizados, { 
+        where: { ...where } ,
+        transaction: transacao 
+      });
 
     if ( listaDeRegistrosAtualizados[0] === 0 ) {
       return false;
